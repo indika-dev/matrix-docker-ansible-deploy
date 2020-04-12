@@ -27,7 +27,7 @@
     path: "{{ matrix_synapse_config_dir_path }}/env-goofys"
     state: absent
 
-- name: Ensure Goofys Docker image doesn't exist
-  docker_image:
-    name: "{{ matrix_s3_goofys_docker_image }}"
-    state: absent
+#- name: Ensure Goofys Docker image doesn't exist
+#  docker_image:
+#    name: "{{ matrix_s3_goofys_docker_image }}"
+#    state: absent

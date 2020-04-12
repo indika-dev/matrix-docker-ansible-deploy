@@ -33,13 +33,13 @@
     - "matrix_ssl_lets_encrypt_support_email"
   when: "matrix_ssl_retrieval_method == 'lets-encrypt' and vars[item] is none"
 
-- name: Ensure certbot Docker image is pulled
-  docker_image:
-    name: "{{ matrix_ssl_lets_encrypt_certbot_docker_image }}"
-    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
-    force_source: "{{ matrix_ssl_lets_encrypt_certbot_docker_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
-    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else matrix_ssl_lets_encrypt_certbot_docker_image_force_pull }}"
-  when: "matrix_ssl_retrieval_method == 'lets-encrypt'"
+#- name: Ensure certbot Docker image is pulled
+#  docker_image:
+#    name: "{{ matrix_ssl_lets_encrypt_certbot_docker_image }}"
+#    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+#    force_source: "{{ matrix_ssl_lets_encrypt_certbot_docker_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+#    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else matrix_ssl_lets_encrypt_certbot_docker_image_force_pull }}"
+#  when: "matrix_ssl_retrieval_method == 'lets-encrypt'"
 
 - name: Obtain Let's Encrypt certificates
   include_tasks: "{{ role_path }}/tasks/ssl/setup_ssl_lets_encrypt_obtain_for_domain.yml"
