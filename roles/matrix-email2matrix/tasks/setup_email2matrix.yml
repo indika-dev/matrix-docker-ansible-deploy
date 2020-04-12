@@ -25,13 +25,13 @@
     mode: 0640
   when: matrix_email2matrix_enabled|bool
 
-#- name: Ensure Email2Matrix image is pulled
-#  docker_image:
-#    name: "{{ matrix_email2matrix_docker_image }}"
-#    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
-#    force_source: "{{ matrix_email2matrix_docker_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
-#    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else matrix_email2matrix_docker_image_force_pull }}"
-#  when: matrix_email2matrix_enabled|bool
+- name: Ensure Email2Matrix image is pulled
+  docker_image:
+    name: "{{ matrix_email2matrix_docker_image }}"
+    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+    force_source: "{{ matrix_email2matrix_docker_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else matrix_email2matrix_docker_image_force_pull }}"
+  when: matrix_email2matrix_enabled|bool
 
 - name: Ensure matrix-email2matrix.service installed
   template:
@@ -41,10 +41,10 @@
   register: matrix_email2matrix_systemd_service_result
   when: matrix_email2matrix_enabled|bool
 
-#- name: Ensure systemd reloaded after matrix-email2matrix.service installation
-#  service:
-#    daemon_reload: yes
-#  when: "matrix_email2matrix_enabled|bool and matrix_email2matrix_systemd_service_result.changed"
+- name: Ensure systemd reloaded after matrix-email2matrix.service installation
+  service:
+    daemon_reload: yes
+  when: "matrix_email2matrix_enabled|bool and matrix_email2matrix_systemd_service_result.changed"
 
 #
 # Tasks related to getting rid of the Email2Matrix (if it was previously enabled)
@@ -70,10 +70,10 @@
     state: absent
   when: "not matrix_email2matrix_enabled|bool and matrix_email2matrix_service_stat.stat.exists"
 
-#- name: Ensure systemd reloaded after matrix-email2matrix.service removal
-#  service:
-#    daemon_reload: yes
-#  when: "not matrix_email2matrix_enabled|bool and matrix_email2matrix_service_stat.stat.exists"
+- name: Ensure systemd reloaded after matrix-email2matrix.service removal
+  service:
+    daemon_reload: yes
+  when: "not matrix_email2matrix_enabled|bool and matrix_email2matrix_service_stat.stat.exists"
 
 - name: Ensure Email2Matrix data path doesn't exist
   file:
@@ -81,8 +81,8 @@
     state: absent
   when: "not matrix_email2matrix_enabled|bool"
 
-#- name: Ensure Email2Matrix Docker image doesn't exist
-#  docker_image:
-#    name: "{{ matrix_email2matrix_docker_image }}"
-#    state: absent
-#  when: "not matrix_email2matrix_enabled|bool"
+- name: Ensure Email2Matrix Docker image doesn't exist
+  docker_image:
+    name: "{{ matrix_email2matrix_docker_image }}"
+    state: absent
+  when: "not matrix_email2matrix_enabled|bool"

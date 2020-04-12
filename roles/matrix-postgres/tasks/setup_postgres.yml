@@ -24,13 +24,13 @@
   when: "matrix_postgres_enabled|bool and matrix_postgres_docker_image_to_use != matrix_postgres_docker_image_latest"
 
 # Even if we don't run the internal server, we still need this for running the CLI
-#- name: Ensure postgres Docker image is pulled
-#  docker_image:
-#    name: "{{ matrix_postgres_docker_image_to_use }}"
-#    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
-#    force_source: "{{ matrix_postgres_docker_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
-#    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else matrix_postgres_docker_image_force_pull }}"
-#  when: matrix_postgres_enabled|bool
+- name: Ensure postgres Docker image is pulled
+  docker_image:
+    name: "{{ matrix_postgres_docker_image_to_use }}"
+    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+    force_source: "{{ matrix_postgres_docker_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else matrix_postgres_docker_image_force_pull }}"
+  when: matrix_postgres_enabled|bool
 
 - name: Ensure Postgres paths exist
   file:
@@ -101,10 +101,10 @@
   register: matrix_postgres_systemd_service_result
   when: matrix_postgres_enabled|bool
 
-#- name: Ensure systemd reloaded after matrix-postgres.service installation
-#  service:
-#    daemon_reload: yes
-#  when: "matrix_postgres_enabled|bool and matrix_postgres_systemd_service_result.changed"
+- name: Ensure systemd reloaded after matrix-postgres.service installation
+  service:
+    daemon_reload: yes
+  when: "matrix_postgres_enabled|bool and matrix_postgres_systemd_service_result.changed"
 
 #
 # Tasks related to getting rid of the internal postgres server (if it was previously enabled)
@@ -129,10 +129,10 @@
     state: absent
   when: "not matrix_postgres_enabled|bool and matrix_postgres_service_stat.stat.exists"
 
-#- name: Ensure systemd reloaded after matrix-postgres.service removal
-#  service:
-#    daemon_reload: yes
-#  when: "not matrix_postgres_enabled|bool and matrix_postgres_service_stat.stat.exists"
+- name: Ensure systemd reloaded after matrix-postgres.service removal
+  service:
+    daemon_reload: yes
+  when: "not matrix_postgres_enabled|bool and matrix_postgres_service_stat.stat.exists"
 
 - name: Check existence of matrix-postgres local data path
   stat:

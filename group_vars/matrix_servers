@@ -18,6 +18,8 @@
 
 matrix_identity_server_url: "{{ 'https://' + matrix_synapse_trusted_third_party_id_servers[0] if matrix_synapse_trusted_third_party_id_servers|length > 0 else None }}"
 
+matrix_riot_jitsi_preferredDomain: "{{ matrix_server_fqn_jitsi if matrix_jitsi_enabled else '' }}"
+
 ######################################################################
 #
 # /matrix-base
@@ -292,6 +294,37 @@ matrix_mautrix_whatsapp_login_shared_secret: "{{ matrix_synapse_ext_password_pro
 
 ######################################################################
 #
+# matrix-bridge-mx-puppet-skype
+#
+######################################################################
+
+# We don't enable bridges by default.
+matrix_mx_puppet_skype_enabled: false
+
+matrix_mx_puppet_skype_container_image_self_build: "{{ matrix_container_images_self_build }}"
+
+matrix_mx_puppet_skype_systemd_required_services_list: |
+  {{
+    ['docker.service']
+    +
+    (['matrix-synapse.service'] if matrix_synapse_enabled else [])
+  }}
+
+matrix_mx_puppet_skype_appservice_token: "{{ matrix_synapse_macaroon_secret_key | password_hash('sha512', 'skype.as.tok') | to_uuid }}"
+
+matrix_mx_puppet_skype_homeserver_token: "{{ matrix_synapse_macaroon_secret_key | password_hash('sha512', 'skype.hs.tok') | to_uuid }}"
+
+matrix_mx_puppet_skype_login_shared_secret: "{{ matrix_synapse_ext_password_provider_shared_secret_auth_shared_secret if matrix_synapse_ext_password_provider_shared_secret_auth_enabled else '' }}"
+
+######################################################################
+#
+# /matrix-bridge-mx-puppet-skype
+#
+######################################################################
+
+
+######################################################################
+#
 # matrix-corporal
 #
 ######################################################################
@@ -412,11 +445,11 @@ matrix_jitsi_jvb_auth_password: "{{ matrix_synapse_macaroon_secret_key | passwor
 matrix_jitsi_web_stun_servers: |
   {{
     [
-      matrix_server_fqn_matrix + ':5349',
-      matrix_server_fqn_matrix + ':3478',
+      'stun:' + matrix_server_fqn_matrix + ':5349',
+      'stun:' + matrix_server_fqn_matrix + ':3478',
     ]
     if matrix_coturn_enabled
-    else [ 'stun.l.google.com:19302', 'stun1.l.google.com:19302', 'stun2.l.google.com:19302']
+    else [ 'stun:meet-jit-si-turnrelay.jitsi.net:443']
   }}
 
 ######################################################################

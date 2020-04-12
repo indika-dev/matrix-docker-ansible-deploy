@@ -22,13 +22,13 @@
     group: "{{ matrix_dimension_user_gid }}"
   when: matrix_dimension_enabled|bool
 
-#- name: Ensure Dimension image is pulled
-#  docker_image:
-#    name: "{{ matrix_dimension_docker_image }}"
-#    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
-#    force_source: "{{ matrix_dimension_docker_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
-#    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else matrix_dimension_docker_image_force_pull }}"
-#  when: matrix_dimension_enabled|bool
+- name: Ensure Dimension image is pulled
+  docker_image:
+    name: "{{ matrix_dimension_docker_image }}"
+    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+    force_source: "{{ matrix_dimension_docker_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else matrix_dimension_docker_image_force_pull }}"
+  when: matrix_dimension_enabled|bool
 
 - name: Ensure matrix-dimension.service installed
   template:
@@ -38,10 +38,10 @@
   register: matrix_dimension_systemd_service_result
   when: matrix_dimension_enabled|bool
 
-#- name: Ensure systemd reloaded after matrix-dimension.service installation
-#  service:
-#    daemon_reload: yes
-#  when: "matrix_dimension_enabled|bool and matrix_dimension_systemd_service_result.changed"
+- name: Ensure systemd reloaded after matrix-dimension.service installation
+  service:
+    daemon_reload: yes
+  when: "matrix_dimension_enabled|bool and matrix_dimension_systemd_service_result.changed"
 
 #
 # Tasks related to getting rid of the dimension (if it was previously enabled)
@@ -67,10 +67,10 @@
     state: absent
   when: "not matrix_dimension_enabled|bool and matrix_dimension_service_stat.stat.exists"
 
-#- name: Ensure systemd reloaded after matrix-dimension.service removal
-#  service:
-#    daemon_reload: yes
-#  when: "not matrix_dimension_enabled|bool and matrix_dimension_service_stat.stat.exists"
+- name: Ensure systemd reloaded after matrix-dimension.service removal
+  service:
+    daemon_reload: yes
+  when: "not matrix_dimension_enabled|bool and matrix_dimension_service_stat.stat.exists"
 
 - name: Ensure Dimension environment variables path doesn't exist
   file:
@@ -78,8 +78,8 @@
     state: absent
   when: "not matrix_dimension_enabled|bool"
 
-#- name: Ensure Dimension Docker image doesn't exist
-#  docker_image:
-#    name: "{{ matrix_dimension_docker_image }}"
-#    state: absent
-#  when: "not matrix_dimension_enabled|bool"
+- name: Ensure Dimension Docker image doesn't exist
+  docker_image:
+    name: "{{ matrix_dimension_docker_image }}"
+    state: absent
+  when: "not matrix_dimension_enabled|bool"

@@ -12,15 +12,14 @@
 - include_tasks: "{{ role_path }}/tasks/server_base/setup_archlinux.yml"
   when: ansible_distribution == 'Archlinux'
 
-#- name: Ensure Docker is started and autoruns
-#  service:
-#    name: docker
-#    state: started
-#    enabled: yes
+- name: Ensure Docker is started and autoruns
+  service:
+    name: docker
+    state: started
+    enabled: yes
 
-#- name: "Ensure {{ matrix_ntpd_service }} is started and autoruns"
-#  service:
-#    name: "{{ matrix_ntpd_service }}"
-#    state: started
-#    enabled: yes
-
+- name: "Ensure {{ matrix_ntpd_service }} is started and autoruns"
+  service:
+    name: "{{ matrix_ntpd_service }}"
+    state: started
+    enabled: yes

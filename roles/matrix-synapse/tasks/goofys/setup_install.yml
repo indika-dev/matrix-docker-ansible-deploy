@@ -1,9 +1,9 @@
-#- name: Ensure Goofys Docker image is pulled
-#  docker_image:
-#    name: "{{ matrix_s3_goofys_docker_image }}"
-#    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
-#    force_source: "{{ matrix_s3_goofys_docker_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
-#    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else matrix_s3_goofys_docker_image_force_pull }}"
+- name: Ensure Goofys Docker image is pulled
+  docker_image:
+    name: "{{ matrix_s3_goofys_docker_image }}"
+    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+    force_source: "{{ matrix_s3_goofys_docker_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else matrix_s3_goofys_docker_image_force_pull }}"
 
 # This will throw a Permission Denied error if already mounted
 - name: Check Matrix Goofys external storage mountpoint path
@@ -35,7 +35,7 @@
     mode: 0644
   register: matrix_goofys_systemd_service_result
 
-#- name: Ensure systemd reloaded after matrix-goofys.service installation
-#  service:
-#    daemon_reload: yes
-#  when: "matrix_goofys_systemd_service_result.changed"
+- name: Ensure systemd reloaded after matrix-goofys.service installation
+  service:
+    daemon_reload: yes
+  when: "matrix_goofys_systemd_service_result.changed"
